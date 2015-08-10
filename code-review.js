@@ -29,6 +29,7 @@ function PriorityQueue() {
 
 	/**
 	 * Returns the oldest-added value with the highest priority
+	 * @returns {*} - value removed
 	 */
 	this.pop = function() {
 		if (this.count === 0) {
@@ -87,7 +88,8 @@ PriorityQueue.prototype.removeEmptyPriority = function(priority) {
  * Changes the Priority to a different key value.
  *
  * @param {*} value - The Item we wish to change
- * @param {Number} newPriority - Positive integer 
+ * @param {Number} newPriority - Positive integer
+ * @returns {Boolean} - true if value exists, else returns false
  */
 PriorityQueue.prototype.changePriority = function(value, newPriority) {
 	var foundItem = false;
