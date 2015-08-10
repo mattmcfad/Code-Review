@@ -7,7 +7,7 @@
  * @class
  */
 function PriorityQueue() {
-	this.store = {};	// keys are priorities, values are arrays of elements
+	this.queue = {};	// keys are priorities, values are arrays of elements
 	this.count = 0;
 
 
@@ -15,15 +15,15 @@ function PriorityQueue() {
 	 * Adds an item
 	 * priority must be a positive integer (higher value has higher priority)
 	 * 
-	 * @param {*} value - The Item we wish to change
-	 * @param {Number} priority - Positive integer 
+	 * @param {*} value - The Item we are adding to the queue
+	 * @param {Number} priority - Positive integer
 	 */
 	this.add = function(value, priority) {
-		if (this.store[priority] == undefined) {
-			this.store[priority] = [];
+		if (this.queue[priority] == undefined) {
+			this.queue[priority] = [];
 		}
 
-		this.store[priority].push(value);
+		this.queue[priority].push(value);
 		this.count++;
 	};
 
@@ -36,7 +36,7 @@ function PriorityQueue() {
 			return false;
 		}
 		var maxKey = Math.max.apply(null, this.getAllPriorities());
-		var poppedValue = this.store[maxKey].shift();
+		var poppedValue = this.queue[maxKey].shift();
 		this.count--;
 		this.removeEmptyPriority(maxKey);
 
@@ -53,34 +53,37 @@ function PriorityQueue() {
 };
 
 /**
- * Returns an array of numerical priorities
+ * Returns all the priorities in descending order
  * @returns {Array}
  */
 PriorityQueue.prototype.getAllPriorities = function() {
-	return Object.keys(this.store);
+	return Object.keys(this.queue).sort(function(a, b){
+		return b - a;
+	});
 };
 
 /**
  * Iterates through all the queue elements in priority-then-FIFO order
  * 
- * @param {function} callback - Callback function to be used on every element.
+ * @param {function} callback - Callback function to be used on every element
  */
 PriorityQueue.prototype.priorityForEach = function(callback) {
-	for (var priority in this.store){
-		for (var i = 0; i < this.store[priority].length; i++) {
-			callback(this.store[priority][i]);
+	var allPriorities = this.getAllPriorities();
+	allPriorities.forEach(function(priority) {
+		for (var valueIndex = 0; valueIndex < this.queue[priority].length; valueIndex++) {
+			callback(this.queue[priority][valueIndex]);
 		}
-	}
+	}, this);
 };
 
 /**
- * Tests if a priority's array is empty and deletes the priority if not.
+ * Tests if a priority's array is empty and deletes the priority if not
  * 
  * @param {Number} priority - Priority to be tested
  */
 PriorityQueue.prototype.removeEmptyPriority = function(priority) {
-	if (this.store[priority].length === 0){
-		delete this.store[priority];
+	if (this.queue[priority].length === 0){
+		delete this.queue[priority];
 	}
 };
 
@@ -93,21 +96,24 @@ PriorityQueue.prototype.removeEmptyPriority = function(priority) {
  */
 PriorityQueue.prototype.changePriority = function(value, newPriority) {
 	var foundItem = false;
+	var allPriorities = this.getAllPriorities();
 
-	for (var priority in this.store){
-		this.store[priority].forEach(function(item, index) {
-			if (item === value) {
-				this.store[priority].splice(index, 1);  // remove the item
+	allPriorities.some(function(priority) {
+		for (var valueIndex = 0; valueIndex < this.queue[priority].length; valueIndex++) {
+			if (this.queue[priority][valueIndex] === value) {
+				this.queue[priority].splice(valueIndex, 1);  // remove the item
 				this.add(value, newPriority);
 				this.count--;
 				foundItem = true;
 				this.removeEmptyPriority(priority);
-				return false;  // early exit from forEach
+				return true; // early exit of both loops
 			}
-		}, this);
-		if (foundItem) {
-			return true;
 		}
-	};
-	return false;
+	}, this);
+
+	if (foundItem) {
+		return true;
+	} else {
+		return false;
+	}
 };
