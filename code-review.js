@@ -65,13 +65,9 @@ PriorityQueue.prototype.getAllPriorities = function() {
  * @param {function} callback - Callback function to be used on every element.
  */
 PriorityQueue.prototype.priorityForEach = function(callback) {
-	var keys = this.getAllPriorities();
-
-	for (var a = keys.length; a > 0; a--) {
-		if (this.store[a] !==  undefined) {
-			for (var b = 0; b < this.store[a].length; b++) {
-				callback(this.store[a][b]);
-			}
+	for (var priority in this.store){
+		for (var i = 0; i < this.store[priority].length; i++) {
+			callback(this.store[priority][i]);
 		}
 	}
 };
