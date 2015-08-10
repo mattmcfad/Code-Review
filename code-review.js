@@ -32,7 +32,7 @@ function PriorityQueue() {
 	 * @returns {*} - value removed
 	 */
 	this.pop = function() {
-		if (this.count === 0) {
+		if (this.length() === 0) {
 			return false;
 		}
 		var maxKey = Math.max.apply(null, this.getAllPriorities());
