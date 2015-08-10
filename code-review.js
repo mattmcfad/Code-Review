@@ -35,10 +35,10 @@ function PriorityQueue() {
 		if (this.length() === 0) {
 			return false;
 		}
-		var maxKey = Math.max.apply(null, this.getAllPriorities());
-		var poppedValue = this.queue[maxKey].shift();
+		var highestPriority = Math.max.apply(null, this.getAllPriorities());
+		var poppedValue = this.queue[highestPriority].shift();
 		this.count--;
-		this.removeEmptyPriority(maxKey);
+		this.removeEmptyPriority(highestPriority);
 
 		return poppedValue
 	};
